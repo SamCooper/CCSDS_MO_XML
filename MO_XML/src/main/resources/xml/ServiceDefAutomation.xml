@@ -108,9 +108,31 @@
             </mal:errorRef>
           </mal:errors>
         </mal:submitIP>
+        <mal:requestIP name="getStatus" number="6" supportInReplay="false"
+                       comment="Return the state of the specified procedure instance.&#xA;">
+          <mal:messages>
+            <mal:request>
+              <mal:field name="procedureInstance"
+                         comment="The operation takes the procedure instance key of the procedure.&#xA;">
+                <mal:type name="ObjectKey" area="COM"/>
+              </mal:field>
+            </mal:request>
+            <mal:response>
+              <mal:field name="procedureState"
+                         comment="The operation returns the state of the requested procedure or UNKNOWN if the requested procedure is not known.&#xA;">
+                <mal:type name="ProcedureState" service="AutomationControl" area="Automation"/>
+              </mal:field>
+            </mal:response>
+          </mal:messages>
+          <mal:errors>
+            <mal:errorRef comment="The requested procedure instance is not known.&#xA;">
+              <mal:type name="UNKNOWN" area="MAL"/>
+            </mal:errorRef>
+          </mal:errors>
+        </mal:requestIP>
       </mal:capabilitySet>
       <mal:capabilitySet number="2">
-        <mal:requestIP name="listActiveProcedures" number="6" supportInReplay="false"
+        <mal:requestIP name="listActiveProcedures" number="7" supportInReplay="false"
                        comment="Return a list of active procedures/tasks&#xA;">
           <mal:messages>
             <mal:request>
@@ -133,7 +155,7 @@
             </mal:errorRef>
           </mal:errors>
         </mal:requestIP>
-        <mal:requestIP name="listAvailableProcedures" number="7" supportInReplay="false"
+        <mal:requestIP name="listAvailableProcedures" number="8" supportInReplay="false"
                        comment="Return a list of available procedures/tasks&#xA;">
           <mal:messages>
             <mal:request>

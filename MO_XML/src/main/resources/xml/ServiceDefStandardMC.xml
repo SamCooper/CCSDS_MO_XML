@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mal:specification xmlns:com="http://www.ccsds.org/schema/COMSchema"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:mal="http://www.ccsds.org/schema/ServiceSchema">
+  <mal:area name="StandardMC" number="44" version="1">
+    <mal:service xsi:type="com:ExtendedServiceType" name="SessionControl" number="1">
+      <mal:capabilitySet number="1">
+        <mal:submitIP name="setControlMode" number="1" supportInReplay="false"
+                      comment="Sets the control mode for the calling application. The &amp;ldquo;authentication id&amp;rdquo; in the MAL header must match that used when the Login was performed such that the session for which the control mode is set can be identified.&#xA;">
+          <mal:messages>
+            <mal:submit>
+              <mal:field name="requestControl">
+                <mal:type name="Boolean" area="MAL"/>
+              </mal:field>
+            </mal:submit>
+          </mal:messages>
+        </mal:submitIP>
+        <mal:requestIP name="getControlMode" number="2" supportInReplay="false"
+                       comment="Returns whether the calling application has control or not.&#xA;">
+          <mal:messages>
+            <mal:request/>
+            <mal:response>
+              <mal:field name="hasControl">
+                <mal:type name="Boolean" area="MAL"/>
+              </mal:field>
+            </mal:response>
+          </mal:messages>
+        </mal:requestIP>
+      </mal:capabilitySet>
+      <com:features>
+        <com:events>
+          <com:event name="AliveEvent" number="1"/>
+        </com:events>
+      </com:features>
+    </mal:service>
+    <mal:service xsi:type="com:ExtendedServiceType" name="Logging" number="2">
+      <mal:capabilitySet number="1">
+        <mal:requestIP name="dumpLog" number="1" supportInReplay="false"
+                       comment="Requests the dump of the log to a file.&#xA;">
+          <mal:messages>
+            <mal:request>
+              <mal:field name="fromTime">
+                <mal:type name="Time" area="MAL"/>
+              </mal:field>
+              <mal:field name="toTime">
+                <mal:type name="Time" area="MAL"/>
+              </mal:field>
+            </mal:request>
+            <mal:response>
+              <mal:field name="completionTime">
+                <mal:type name="Time" area="MAL"/>
+              </mal:field>
+              <mal:field name="withSuccess">
+                <mal:type name="Boolean" area="MAL"/>
+              </mal:field>
+            </mal:response>
+          </mal:messages>
+        </mal:requestIP>
+      </mal:capabilitySet>
+    </mal:service>
+  </mal:area>
+</mal:specification>

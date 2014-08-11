@@ -394,19 +394,11 @@
       </mal:capabilitySet>
       <mal:dataTypes>
         <mal:enumeration name="Validity" shortFormPart="3"
-                         comment="Validity is an enumeration representing the possible validity states of a parameter.&#xA;">
-          <mal:item value="INVALID" nvalue="1"
-                    comment="The validity expression has been evaluated to FALSE."/>
-          <mal:item value="INVALID_RAW" nvalue="2"
-                    comment="The raw value cannot be obtained or calculated.&#xA;"/>
-          <mal:item value="VALID" nvalue="3"
-                    comment="The validity expression either has been evaluated to TRUE, or there is no expression defined. If the parameter definition containing the validity expression contains a conversion, then this has succeeded also.&#xA;"/>
-          <mal:item value="VALID_RAW_ONLY" nvalue="4"
-                    comment="The validity expression either has evaluated to TRUE or there is no validity defined, but the converted value of the parameter definition containing the validity expression has failed conversion.&#xA;"/>
-          <mal:item value="UNVERIFIED" nvalue="5"
-                    comment="The validity of the validity expression has been evaluated to FALSE and therefore cannot be used to verify the current value.&#xA;"/>
-          <mal:item value="EXPIRED" nvalue="6"
-                    comment="The parameter has a time out associated which has expired.&#xA;"/>
+                         comment="Validity is an enumeration representing the possible validity states of a parameter. This set has been customised for the Standardised MC project, however the referenced text in this document does not reflect this change.">
+          <mal:item value="VALID" nvalue="1"/>
+          <mal:item value="UNKNOWN" nvalue="2"/>
+          <mal:item value="UNVERIFIED" nvalue="3"/>
+          <mal:item value="ERROR" nvalue="4"/>
         </mal:enumeration>
         <mal:composite name="ParameterDefinition" shortFormPart="1"
                        comment="The ParameterDefinition structure holds a parameter definition. The conversion field defines the conditions where the relevant conversion is applied. For onboard parameters, the update interval should be a multiple of the minimum sampling interval of that parameter.&#xA;">

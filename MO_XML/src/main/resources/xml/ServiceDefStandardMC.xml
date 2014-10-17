@@ -3,24 +3,27 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns:mal="http://www.ccsds.org/schema/ServiceSchema">
   <mal:area name="StandardMC" number="44" version="1">
-    <mal:service xsi:type="com:ExtendedServiceType" name="SessionControl" number="1">
+    <mal:service xsi:type="com:ExtendedServiceType" name="SessionControl" number="1"
+                 comment="The session control service provides two main ares of funcionality. The first is the ability to request control of a service provider and the second area is the process alive reporting.&#xA;For the requesting of control, a client invokes the setControlMode operation with a TRUE Boolean argument to request control of the service provider. Once control has been granted only operations from that consumer will be allowed until the controlling consumer releases control using the setControlModel operation again but this time with a FALSE Boolean argument.&#xA;For the alive reporting the service defines a single COM event that service providers should generate at a predefined interval. If a service provider crashes then the absense of this event will indicate a problem.">
       <mal:capabilitySet number="1">
         <mal:submitIP name="setControlMode" number="1" supportInReplay="false"
-                      comment="Sets the control mode for the calling application. The &amp;ldquo;authentication id&amp;rdquo; in the MAL header must match that used when the Login was performed such that the session for which the control mode is set can be identified.&#xA;">
+                      comment="Requests that control of the provider be set to the calling consumer. The &amp;ldquo;authentication id&amp;rdquo; in the MAL header is used to identify the consumer. The operation is used to request control by passing a TRUE Boolean and also to release control by passing a FALSE Boolean.">
           <mal:messages>
             <mal:submit>
-              <mal:field name="requestControl">
+              <mal:field name="requestControl"
+                         comment="If the provider is currently under control and the authentication identifier of the SUBMIT message does not match the authentication identifier of the currently set controller then the operation shall fail with an AUTHORISATION_FAIL standard MAL error.&#xA;If the requestControl field is TRUE, and the service provider is not currently under control, then the provider shall consider itself under control and restrict access to further operations to consumers with the matching authentication identifier.&#xA;If the requestControl field is FALSE, and the service provider is currently under control, then the provider shall consider itself not under control and not restrict access to further operations to consumers with the matching authentication identifier.">
                 <mal:type name="Boolean" area="MAL"/>
               </mal:field>
             </mal:submit>
           </mal:messages>
         </mal:submitIP>
         <mal:requestIP name="getControlMode" number="2" supportInReplay="false"
-                       comment="Returns whether the calling application has control or not.&#xA;">
+                       comment="Returns whether the calling application has control or not. It uses the autnication identifier of the submitted MAL message to identify the calling consumer.">
           <mal:messages>
             <mal:request/>
             <mal:response>
-              <mal:field name="hasControl">
+              <mal:field name="hasControl"
+                         comment="If the provider is under control and the authentication identifier of the supplied MAL message matches the authentication identifier of the controlling consumer then the operation shall return TRUE, otherwise FALSE.">
                 <mal:type name="Boolean" area="MAL"/>
               </mal:field>
             </mal:response>
@@ -28,26 +31,34 @@
         </mal:requestIP>
       </mal:capabilitySet>
       <com:features>
-        <com:events>
-          <com:event name="AliveEvent" number="1"/>
+        <com:events comment="The service shall define a single COM event for the notification of application 'alive' status.&#xA;The body of the ApplicationAlive event shall be the application name.&#xA;The application name strings shall be deployment specific.&#xA;Each period each executing application shall publish a single ApplicationAlive COM event.&#xA;The period between ApplicationAlive COM events shall be deployment specific.">
+          <com:event name="ApplicationAlive" number="1">
+            <com:objectType>
+              <mal:type name="String" area="MAL"/>
+            </com:objectType>
+          </com:event>
         </com:events>
       </com:features>
     </mal:service>
-    <mal:service xsi:type="com:ExtendedServiceType" name="Logging" number="2">
+    <mal:service xsi:type="com:ExtendedServiceType" name="Logging" number="2"
+                 comment="The Logging service provides two capabilities, the first is the definition of a LogEntry COM event and the second is a single operation to request the dumping of the log events to a file.&#xA;The LogEntry COM event should be used by any application that wishes to log an event. A logging application can then subscribe for these events to be able to build a centralised log.&#xA;The logging application shoul also implement the single operation to allow consumer to request the dump of those log events to a file.">
       <mal:capabilitySet number="1">
         <mal:requestIP name="dumpLog" number="1" supportInReplay="false"
-                       comment="Requests the dump of the log to a file.&#xA;">
+                       comment="Requests the dump of the log to a file.">
           <mal:messages>
             <mal:request>
-              <mal:field name="fromTime">
+              <mal:field name="fromTime"
+                         comment="The fromTime field holds the start time of the of the logging window to dump. It may be NULL which indicates no start time, i.e. no start time filter.">
                 <mal:type name="Time" area="MAL"/>
               </mal:field>
-              <mal:field name="toTime">
+              <mal:field name="toTime"
+                         comment="The toTime field holds the end time of the logging window to dump. It may be NULL which indicates no end time i.e. no end time filter.&#xA;If both fromTime and toTime field are supplied and the fromTime is not earlier than the toTime then an INVALID error shall be returned and no log shall be dumped.&#xA;If there are no logging entries in the requested time window then an UNKNOWN error shall be returned.">
                 <mal:type name="Time" area="MAL"/>
               </mal:field>
             </mal:request>
             <mal:response>
-              <mal:field name="completionTime">
+              <mal:field name="completionTime"
+                         comment="The completedTime field in the response shall contain the time that the dump was completed.&#xA;The withSuccess field in the response shall be TRUE if the dump was successful otherwise if there was a problem dumping the entries then it shall control FALSE.">
                 <mal:type name="Time" area="MAL"/>
               </mal:field>
               <mal:field name="withSuccess">
@@ -55,8 +66,25 @@
               </mal:field>
             </mal:response>
           </mal:messages>
+          <mal:errors>
+            <mal:errorRef comment="The selected timeframe does not contain any logging entries.">
+              <mal:type name="UNKNOWN" area="MAL"/>
+            </mal:errorRef>
+            <mal:errorRef comment="The supplied time values values are invalid.">
+              <mal:type name="INVALID" area="COM"/>
+            </mal:errorRef>
+          </mal:errors>
         </mal:requestIP>
       </mal:capabilitySet>
+      <com:features>
+        <com:events comment="Applications wishing to log an message should raise a LogEntry COM event.&#xA;The body of the LogEntry COM event shall be the message to log.&#xA;A logging service provider should monitor these events to build a centralised log that consumers use to request log information.">
+          <com:event name="LogEntry" number="1">
+            <com:objectType>
+              <mal:type name="String" area="MAL"/>
+            </com:objectType>
+          </com:event>
+        </com:events>
+      </com:features>
     </mal:service>
   </mal:area>
 </mal:specification>

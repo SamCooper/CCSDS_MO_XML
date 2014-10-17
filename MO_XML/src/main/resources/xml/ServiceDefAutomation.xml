@@ -4,180 +4,186 @@
                    xmlns:mal="http://www.ccsds.org/schema/ServiceSchema">
   <mal:area name="Automation" number="6" version="1">
     <mal:service xsi:type="com:ExtendedServiceType" name="AutomationControl" number="1"
-                 comment="The automation service allows consumers to submit a procedure for execution and to subsequently monitor the execution progress of these procedures via the COM activity tracking pattern.&#xA;The progress of the procedure is split into two parts, firstly transfer from the consumer to the provider, and secondly execution in the provider. A procedure is submitted to the provider using the startProcedure operation, the progress of which can be monitored using the COM activity tracking pattern, which completes when the procedure has been delivered to the provider. The procedure is then executed in the provider which can be also be monitored using the activity tracking pattern. The nominal sequence of procedure submission and execution monitoring are shown below:&#xA;&lt; insert sequence diag here &gt;&#xA;&#xA;The procedure service defines two types of object, the first type is the procedure definition object that holds the description of a procedure with the list of required/optional arguments. The second type is the procedure object that holds details of a specific procedure instance namely a value for each of the arguments of the procedure.&#xA;&#xA;">
+                 comment="The automation service allows consumers to submit a procedure for execution and to subsequently monitor the execution progress of these procedures via the COM activity tracking pattern.&#xA;The progress of the procedure is split into two parts, firstly transfer from the consumer to the provider, and secondly execution in the provider. A procedure is submitted to the provider using the startProcedure operation, the progress of which can be monitored using the COM activity tracking pattern, which completes when the procedure has been delivered to the provider. The procedure is then executed in the provider which can be also be monitored using the activity tracking pattern. The nominal sequence of procedure submission and execution monitoring are shown below:&#xA;&lt; insert sequence diag here &gt;&#xA;&#xA;The procedure service defines two types of object, the first type is the procedure definition object that holds the description of a procedure with the list of required/optional arguments. The second type is the procedure object that holds details of a specific procedure instance namely a value for each of the arguments of the procedure.">
       <mal:capabilitySet number="1">
         <mal:requestIP name="startProcedure" number="1" supportInReplay="false"
-                       comment="Initiate execution of a procedure/task&#xA;">
+                       comment="Initiate execution of a procedure/task">
           <mal:messages>
             <mal:request>
               <mal:field name="procedureDef"
-                         comment="The first part of the operation is the object key of the procedure definition to use.&#xA;&#xA;&#xA;">
+                         comment="The first part of the operation is the object key of the procedure definition to use.">
                 <mal:type name="ObjectKey" area="COM"/>
               </mal:field>
-              <mal:field name="procedureInstance"
-                         comment="The second part of the operation is the procedure arguments.&#xA;">
-                <mal:type name="ProcedureDetails" service="AutomationControl" area="Automation"/>
+              <mal:field name="procedureArguments"
+                         comment="The second part of the operation is the procedure arguments.">
+                <mal:type name="ProcedureInstanceDetails" service="AutomationControl" area="Automation"/>
               </mal:field>
             </mal:request>
             <mal:response>
               <mal:field name="procedureInstance"
-                         comment="The operation returns the object key of the new procedure instance.&#xA;">
+                         comment="The operation returns the object key of the new procedure instance.">
                 <mal:type name="ObjectKey" area="COM"/>
               </mal:field>
             </mal:response>
           </mal:messages>
           <mal:errors>
-            <mal:errorRef comment="The requested procedure definition is not known.&#xA;">
+            <mal:errorRef comment="The requested procedure definition is not known.">
               <mal:type name="UNKNOWN" area="MAL"/>
             </mal:errorRef>
-            <mal:errorRef comment="The argument values supplied are invalid for the request procedure.&#xA;">
+            <mal:errorRef comment="The argument values supplied are invalid for the request procedure.">
               <mal:type name="INVALID" area="COM"/>
             </mal:errorRef>
           </mal:errors>
         </mal:requestIP>
-        <mal:submitIP name="suspendProcedure" number="2" supportInReplay="false"
-                      comment="Suspend execution of a procedure/task&#xA;">
-          <mal:messages>
-            <mal:submit>
-              <mal:field name="procedureInstance"
-                         comment="The operation takes the procedure instance key of the procedure.&#xA;">
-                <mal:type name="ObjectKey" area="COM"/>
-              </mal:field>
-            </mal:submit>
-          </mal:messages>
-          <mal:errors>
-            <mal:errorRef comment="Referenced procedure instance is not in the EXECUTING state.&#xA;">
-              <mal:type name="INVALID" area="COM"/>
-            </mal:errorRef>
-            <mal:errorRef comment="The requested procedure instance is not known.&#xA;">
-              <mal:type name="UNKNOWN" area="MAL"/>
-            </mal:errorRef>
-          </mal:errors>
-        </mal:submitIP>
-        <mal:submitIP name="resumeProcedure" number="3" supportInReplay="false"
-                      comment="Resume execution of a procedure/task&#xA;">
-          <mal:messages>
-            <mal:submit>
-              <mal:field name="procedureInstance"
-                         comment="The operation takes the procedure instance key of the procedure.&#xA;">
-                <mal:type name="ObjectKey" area="COM"/>
-              </mal:field>
-            </mal:submit>
-          </mal:messages>
-          <mal:errors>
-            <mal:errorRef comment="Referenced procedure instance is not in the SUSPENDED state.&#xA;">
-              <mal:type name="INVALID" area="COM"/>
-            </mal:errorRef>
-            <mal:errorRef comment="The requested procedure instance is not known.&#xA;">
-              <mal:type name="UNKNOWN" area="MAL"/>
-            </mal:errorRef>
-          </mal:errors>
-        </mal:submitIP>
-        <mal:submitIP name="abortProcedure" number="4" supportInReplay="false"
-                      comment="Abort execution of a procedure/task - execution terminates immediately&#xA;">
-          <mal:messages>
-            <mal:submit>
-              <mal:field name="procedureInstance"
-                         comment="The operation takes the procedure instance key of the procedure.&#xA;">
-                <mal:type name="ObjectKey" area="COM"/>
-              </mal:field>
-            </mal:submit>
-          </mal:messages>
-          <mal:errors>
-            <mal:errorRef comment="The requested procedure instance is not known.&#xA;">
-              <mal:type name="UNKNOWN" area="MAL"/>
-            </mal:errorRef>
-          </mal:errors>
-        </mal:submitIP>
-        <mal:submitIP name="stopProcedure" number="5" supportInReplay="false"
-                      comment="Stop execution of a procedure/task - execution terminates on completion of the next phase&#xA;">
-          <mal:messages>
-            <mal:submit>
-              <mal:field name="procedureInstance"
-                         comment="The operation takes the procedure instance key of the procedure.&#xA;">
-                <mal:type name="ObjectKey" area="COM"/>
-              </mal:field>
-            </mal:submit>
-          </mal:messages>
-          <mal:errors>
-            <mal:errorRef comment="Referenced procedure instance is not in the EXECUTING state.&#xA;">
-              <mal:type name="INVALID" area="COM"/>
-            </mal:errorRef>
-            <mal:errorRef comment="The requested procedure instance is not known.&#xA;">
-              <mal:type name="UNKNOWN" area="MAL"/>
-            </mal:errorRef>
-          </mal:errors>
-        </mal:submitIP>
-        <mal:requestIP name="getStatus" number="6" supportInReplay="false"
-                       comment="Return the state of the specified procedure instance.&#xA;">
+        <mal:requestIP name="getStatus" number="2" supportInReplay="false"
+                       comment="Return the state of the specified procedure instance.">
           <mal:messages>
             <mal:request>
               <mal:field name="procedureInstance"
-                         comment="The operation takes the procedure instance key of the procedure.&#xA;">
+                         comment="The operation takes the procedure instance key of the procedure.">
                 <mal:type name="ObjectKey" area="COM"/>
               </mal:field>
             </mal:request>
             <mal:response>
               <mal:field name="procedureState"
-                         comment="The operation returns the state of the requested procedure or UNKNOWN if the requested procedure is not known.&#xA;">
+                         comment="The operation returns the state of the requested procedure or UNKNOWN if the requested procedure is not known.">
                 <mal:type name="ProcedureState" service="AutomationControl" area="Automation"/>
               </mal:field>
             </mal:response>
           </mal:messages>
           <mal:errors>
-            <mal:errorRef comment="The requested procedure instance is not known.&#xA;">
+            <mal:errorRef comment="The requested procedure instance is not known.">
               <mal:type name="UNKNOWN" area="MAL"/>
             </mal:errorRef>
           </mal:errors>
         </mal:requestIP>
       </mal:capabilitySet>
       <mal:capabilitySet number="2">
+        <mal:submitIP name="suspendProcedure" number="3" supportInReplay="false"
+                      comment="Suspend execution of a procedure/task">
+          <mal:messages>
+            <mal:submit>
+              <mal:field name="procedureInstance"
+                         comment="The operation takes the procedure instance key of the procedure.">
+                <mal:type name="ObjectKey" area="COM"/>
+              </mal:field>
+            </mal:submit>
+          </mal:messages>
+          <mal:errors>
+            <mal:errorRef comment="Referenced procedure instance is not in the EXECUTING state.">
+              <mal:type name="INVALID" area="COM"/>
+            </mal:errorRef>
+            <mal:errorRef comment="The requested procedure instance is not known.">
+              <mal:type name="UNKNOWN" area="MAL"/>
+            </mal:errorRef>
+          </mal:errors>
+        </mal:submitIP>
+        <mal:submitIP name="resumeProcedure" number="4" supportInReplay="false"
+                      comment="Resume execution of a procedure/task">
+          <mal:messages>
+            <mal:submit>
+              <mal:field name="procedureInstance"
+                         comment="The operation takes the procedure instance key of the procedure.">
+                <mal:type name="ObjectKey" area="COM"/>
+              </mal:field>
+            </mal:submit>
+          </mal:messages>
+          <mal:errors>
+            <mal:errorRef comment="Referenced procedure instance is not in the SUSPENDED state.">
+              <mal:type name="INVALID" area="COM"/>
+            </mal:errorRef>
+            <mal:errorRef comment="The requested procedure instance is not known.">
+              <mal:type name="UNKNOWN" area="MAL"/>
+            </mal:errorRef>
+          </mal:errors>
+        </mal:submitIP>
+      </mal:capabilitySet>
+      <mal:capabilitySet number="3">
+        <mal:submitIP name="stopProcedure" number="5" supportInReplay="false"
+                      comment="Stop execution of a procedure/task - execution terminates on completion of the next phase">
+          <mal:messages>
+            <mal:submit>
+              <mal:field name="procedureInstance"
+                         comment="The operation takes the procedure instance key of the procedure.">
+                <mal:type name="ObjectKey" area="COM"/>
+              </mal:field>
+            </mal:submit>
+          </mal:messages>
+          <mal:errors>
+            <mal:errorRef comment="Referenced procedure instance is not in the EXECUTING state.">
+              <mal:type name="INVALID" area="COM"/>
+            </mal:errorRef>
+            <mal:errorRef comment="The requested procedure instance is not known.">
+              <mal:type name="UNKNOWN" area="MAL"/>
+            </mal:errorRef>
+          </mal:errors>
+        </mal:submitIP>
+      </mal:capabilitySet>
+      <mal:capabilitySet number="4">
+        <mal:submitIP name="abortProcedure" number="6" supportInReplay="false"
+                      comment="Abort execution of a procedure/task - execution terminates as soon as possible.">
+          <mal:messages>
+            <mal:submit>
+              <mal:field name="procedureInstance"
+                         comment="The operation takes the procedure instance key of the procedure.">
+                <mal:type name="ObjectKey" area="COM"/>
+              </mal:field>
+            </mal:submit>
+          </mal:messages>
+          <mal:errors>
+            <mal:errorRef comment="The requested procedure instance is not known.">
+              <mal:type name="UNKNOWN" area="MAL"/>
+            </mal:errorRef>
+          </mal:errors>
+        </mal:submitIP>
+      </mal:capabilitySet>
+      <mal:capabilitySet number="5">
         <mal:requestIP name="listActiveProcedures" number="7" supportInReplay="false"
-                       comment="Return a list of active procedures/tasks&#xA;">
+                       comment="Return a list of currently executing procedures/tasks including their current execution state. This included paused/stopping procedures.">
           <mal:messages>
             <mal:request>
               <mal:field name="domainFilter"
-                         comment="The operation takes a list of Identifiers which is the domain to filter on.&#xA;The final part of the domain may be the wildcard value '*' which matches the specified domain and all sub-domains.&#xA;">
+                         comment="The operation takes a list of Identifiers which is the domain to filter on.&#xA;The final part of the domain may be the wildcard value '*' which matches the specified domain and all sub-domains.">
                 <mal:type list="true" name="Identifier" area="MAL"/>
               </mal:field>
             </mal:request>
             <mal:response>
               <mal:field name="activeProcedures"
-                         comment="The response contains the list of active procedures.&#xA;">
+                         comment="The response contains the list of active procedures.">
                 <mal:type list="true" name="ProcedureSummary" service="AutomationControl"
                           area="Automation"/>
               </mal:field>
             </mal:response>
           </mal:messages>
           <mal:errors>
-            <mal:errorRef comment="The domain filter is invalid.&#xA;">
+            <mal:errorRef comment="The domain filter is invalid.">
               <mal:type name="INVALID" area="COM"/>
             </mal:errorRef>
           </mal:errors>
         </mal:requestIP>
         <mal:requestIP name="listAvailableProcedures" number="8" supportInReplay="false"
-                       comment="Return a list of available procedures/tasks&#xA;">
+                       comment="Returns a list of procedures that are available on the service provider for subsequent execution. This is the list of procedure definitoins not actually executing procedures. The list of executing procedures is provided by the listActiveProcedures operation.">
           <mal:messages>
             <mal:request>
               <mal:field name="domainFilter"
-                         comment="The operation takes a list of Identifiers which is the domain to filter on.&#xA;The final part of the domain may be the wildcard value '*' which matches the specified domain and all sub-domains.&#xA;">
+                         comment="The operation takes a list of Identifiers which is the domain to filter on.&#xA;The final part of the domain may be the wildcard value '*' which matches the specified domain and all sub-domains.">
                 <mal:type list="true" name="Identifier" area="MAL"/>
               </mal:field>
             </mal:request>
             <mal:response>
               <mal:field name="procedureKey"
-                         comment="The first returned list contains the object keys of the procedure definitions.&#xA;&#xA;">
+                         comment="The first returned list contains the object keys of the procedure definitions.">
                 <mal:type list="true" name="ObjectKey" area="COM"/>
               </mal:field>
               <mal:field name="availableProcedures"
-                         comment="The second returned list contains the procedure definitions.&#xA;The two lists must be the same length and ordered identically so that the object key and the definition of the procedure can be matched.&#xA;">
-                <mal:type list="true" name="ProcedureDefinition" service="AutomationControl"
+                         comment="The second returned list contains the procedure definitions.&#xA;The two lists must be the same length and ordered identically so that the object key and the definition of the procedure can be matched.">
+                <mal:type list="true" name="ProcedureDefinitionDetails" service="AutomationControl"
                           area="Automation"/>
               </mal:field>
             </mal:response>
           </mal:messages>
           <mal:errors>
-            <mal:errorRef comment="The domain filter is invalid.&#xA;">
+            <mal:errorRef comment="The domain filter is invalid.">
               <mal:type name="INVALID" area="COM"/>
             </mal:errorRef>
           </mal:errors>
@@ -185,99 +191,113 @@
       </mal:capabilitySet>
       <mal:dataTypes>
         <mal:enumeration name="ProcedureState" shortFormPart="1"
-                         comment="The ProcedureState enumeration holds the possible states of an active procedure instance.&#xA;">
-          <mal:item value="STARTING" nvalue="1" comment="Procedure is starting&#xA;"/>
-          <mal:item value="EXECUTING" nvalue="2" comment="Procedure is executing&#xA;"/>
-          <mal:item value="SUSPENDING" nvalue="3" comment="Procedure is suspending&#xA;"/>
-          <mal:item value="SUSPENDED" nvalue="4" comment="Procedure has suspended&#xA;"/>
-          <mal:item value="STOPPING" nvalue="5" comment="Procedure is stopping&#xA;"/>
-          <mal:item value="STOPPED" nvalue="6" comment="Procedure has stopped&#xA;"/>
-          <mal:item value="ABORTED" nvalue="7" comment="Procedure has aborted&#xA;"/>
-          <mal:item value="COMPLETED" nvalue="8" comment="Procedure has completed&#xA;"/>
+                         comment="The ProcedureState enumeration holds the possible states of an active procedure instance.">
+          <mal:item value="STARTING" nvalue="1" comment="Procedure is starting"/>
+          <mal:item value="EXECUTING" nvalue="2" comment="Procedure is executing"/>
+          <mal:item value="SUSPENDING" nvalue="3" comment="Procedure is suspending"/>
+          <mal:item value="SUSPENDED" nvalue="4" comment="Procedure has suspended"/>
+          <mal:item value="STOPPING" nvalue="5" comment="Procedure is stopping"/>
+          <mal:item value="STOPPED" nvalue="6" comment="Procedure has stopped"/>
+          <mal:item value="ABORTED" nvalue="7" comment="Procedure has aborted"/>
+          <mal:item value="COMPLETED" nvalue="8" comment="Procedure has completed"/>
         </mal:enumeration>
-        <mal:composite name="ProcedureDefinition" shortFormPart="2"
-                       comment="The ProcedureDefinition structure holds the definition information of a procedure.&#xA;">
+        <mal:composite name="ProcedureDefinitionDetails" shortFormPart="2"
+                       comment="The ProcedureDefinitionDetails structure holds the definition details of a procedure.">
           <mal:extends>
             <mal:type name="Composite" area="MAL"/>
           </mal:extends>
           <mal:field name="name" canBeNull="false"
-                     comment="The name of the procedure. Must not be empty or the wildcard value.&#xA;">
+                     comment="The name of the procedure. Must not be empty or the wildcard value.">
             <mal:type name="Identifier" area="MAL"/>
           </mal:field>
           <mal:field name="description" canBeNull="false"
-                     comment="The description of the procedure.&#xA;">
+                     comment="The description of the procedure.">
             <mal:type name="String" area="MAL"/>
           </mal:field>
-          <mal:field name="arguments" canBeNull="false" comment="The list of argument definitions.&#xA;">
+          <mal:field name="arguments" canBeNull="false" comment="The list of argument definitions.">
             <mal:type list="true" name="ProcedureArgument" service="AutomationControl"
                       area="Automation"/>
           </mal:field>
         </mal:composite>
         <mal:composite name="ProcedureArgument" shortFormPart="3"
-                       comment="The ProcedureArgument structure holds the identifier and definition of a procedure argument.&#xA;">
+                       comment="The ProcedureArgument structure holds the identifier and definition of a procedure argument.">
           <mal:extends>
             <mal:type name="Composite" area="MAL"/>
           </mal:extends>
           <mal:field name="name" canBeNull="false"
-                     comment="The name of the argument. Must not be the wildcard or empty value.&#xA;">
+                     comment="The name of the argument. Must not be the wildcard or empty value.">
             <mal:type name="Identifier" area="MAL"/>
           </mal:field>
           <mal:field name="argumentDefinition" canBeNull="false"
-                     comment="The definition of the argument type.&#xA;">
-            <mal:type name="ArgumentDefinition" area="MC"/>
+                     comment="The definition of the argument type.">
+            <mal:type name="ArgumentDefinitionDetails" area="MC"/>
           </mal:field>
         </mal:composite>
-        <mal:composite name="ProcedureDetails" shortFormPart="4"
-                       comment="The ProcedureDetails structure holds the information required to start an instance of a procedure such as the argument values to use.&#xA;">
+        <mal:composite name="ProcedureInstanceDetails" shortFormPart="4"
+                       comment="The ProcedureInstanceDetails structure holds the information required to start an instance of a procedure such as the argument values to use.">
           <mal:extends>
             <mal:type name="Composite" area="MAL"/>
           </mal:extends>
           <mal:field name="argumentValues"
-                     comment="List containing the values of the arguments. The ordering of the list matches that of the definition. If a value for a particular entry is not being supplied, then its position is filled with a NULL value. If no arguments are defined, then the complete list is replaced with a NULL.&#xA;">
+                     comment="List containing the values of the arguments. The ordering of the list matches that of the definition. If a value for a particular entry is not being supplied, then its position is filled with a NULL value. If no arguments are defined, then the complete list is replaced with a NULL.">
             <mal:type list="true" name="AttributeValue" area="MC"/>
           </mal:field>
-          <mal:field name="isConvertedValue"
-                     comment="Optional list of Booleans that determine whether the supplied argument values are raw or converted. If the Boolean for a particular value is TRUE or null then that value is assumed to be raw. If the complete isConvertedValue list is null then all arguments are assumed to be raw values.&#xA;The ordering of the list matches that of the argument list of the definition.&#xA;">
+          <mal:field name="isRawValue"
+                     comment="Optional list of Booleans that determine whether the supplied argument values are raw or converted. If the Boolean for a particular value is TRUE or null then that value is assumed to be raw. If the complete list is null then all arguments are assumed to be raw values.&#xA;The ordering of the list matches that of the argument list of the definition.">
             <mal:type list="true" name="Boolean" area="MAL"/>
           </mal:field>
         </mal:composite>
         <mal:composite name="ProcedureSummary" shortFormPart="5"
-                       comment="The ProcedureSummary structure holds the summary information of an executing procedure instance.&#xA;">
+                       comment="The ProcedureSummary structure holds the summary information of an executing procedure instance.">
           <mal:extends>
             <mal:type name="Composite" area="MAL"/>
           </mal:extends>
           <mal:field name="definitionKey" canBeNull="false"
-                     comment="The object key of the procedure definition&#xA;">
+                     comment="The object key of the procedure definition">
             <mal:type name="ObjectKey" area="COM"/>
           </mal:field>
           <mal:field name="instanceId" canBeNull="false"
-                     comment="The instance identifier of the procedure instance&#xA;">
+                     comment="The instance identifier of the procedure instance">
             <mal:type name="Long" area="MAL"/>
           </mal:field>
           <mal:field name="state" canBeNull="false"
-                     comment="The current state of the procedure instance&#xA;">
+                     comment="The current state of the procedure instance">
             <mal:type name="ProcedureState" service="AutomationControl" area="Automation"/>
           </mal:field>
         </mal:composite>
       </mal:dataTypes>
       <com:features>
-        <com:objects comment="The definitions of the procedures shall be represented as ProcedureDefinition COM objects.&#xA;Instances of a procedure that are submitted to a provider using the startProcedure operation shall be represented as ProcedureInstance COM object.&#xA;The object instance identifier for a ProcedureInstance object shall be populated by the provider.&#xA;The ProcedureInstance object shall use the related link to indicate which definition object it uses.&#xA;The source link of the ProcedureDefinition object should be the object that caused it to be created, most likely a COM OperationActivity object.&#xA;Instances of a procedure that are submitted to a provider using the startProcedure operation shall link to the startProcedure OperationActivity object using the source link.&#xA;">
+        <com:objects comment="The definitions of the procedures shall be represented as ProcedureDefinition COM objects.&#xA;The source link of the ProcedureDefinition object should be the object that caused it to be created, most likely a COM OperationActivity object or an operator login in the case of off-line editors being used.&#xA;Instances of a procedure that are submitted to a provider using the startProcedure operation shall be represented as ProcedureInstance COM object.&#xA;The object instance identifier for a ProcedureInstance object shall be populated by the provider.&#xA;The ProcedureInstance object shall use the related link to indicate which ProcedureDefinition object it uses.&#xA;Instances of a procedure that are submitted to a provider using the startProcedure operation shall link to the startProcedure OperationActivity object using the source link.&#xA;The source link of the startProcedure OperationActivity object should be the object that caused it to be created, most likely an operator login or another ProcedureInstance procedure object.">
           <com:object name="ProcedureDefinition" number="1">
             <com:objectType>
-              <mal:type name="ProcedureDefinition" service="AutomationControl" area="Automation"/>
+              <mal:type name="ProcedureDefinitionDetails" service="AutomationControl" area="Automation"/>
             </com:objectType>
           </com:object>
           <com:object name="ProcedureInstance" number="2">
             <com:objectType>
-              <mal:type name="ProcedureDetails" service="AutomationControl" area="Automation"/>
+              <mal:type name="ProcedureInstanceDetails" service="AutomationControl" area="Automation"/>
             </com:objectType>
             <com:relatedObject>
               <com:objectType number="1" service="AutomationControl" area="Automation"/>
             </com:relatedObject>
           </com:object>
         </com:objects>
-        <com:archiveUsage comment="ProcedureDefinition objects should be stored in the COM archive.&#xA;When a procedure is sent with the startProcedure operation, the ProcedureInstance object should be stored in the COM archive by the provider.&#xA;"/>
-        <com:activityUsage comment="The COM Activity service may be used to monitor the transfer and execution of the startProcedure operation.&#xA;The COM Activity service may be used to monitor the transfer and execution of procedure instances.&#xA;The COM activity events shall be generated as defined in the COM activity tracking service for the startProcedure operation.&#xA;A Release activity event for the procedure instance shall be generated when a procedure is released from a consumer using the startProcedure operation.&#xA;An Acceptance activity event for the procedure instance shall be generated when a procedure is received by the destination provider as part of the startProcedure operation.&#xA;The source link of the activity events for the procedure instance shall be the ProcedureInstance object.&#xA;In all activity execution events for the procedure instance the ActivityExecution.stageCount field shall be set to 9 which is the highest value from the ProcedureState enumeration.&#xA;In the activity execution event the ActivityExecution.executionStage field shall be set to the numerical value of the ProcedureState enumeration for the current procedure state.&#xA;&#xA;"/>
+        <com:events comment="Execution progress of a procedure shall be reported using COM ActivityTracking Execution events.&#xA;The Execution event may be reported many times as it is used to report each stage in the execution of the procedure.&#xA;If the execution of a procedure fails with an error code then that error code shall be reported using a ProcedureFailure COM event.&#xA;The source of the ProcedureFailure event shall be the ActivityTracking Execution event that represents the final stage of the procedure execution.&#xA;The related field of the ProcedureFailure event shall link to the ProcedureInstance object that failed.&#xA;The body of the event shall hold a numeric failure code that is either a MAL error number or a deployment specific code.&#xA;The specification of the deployment specific failure code is outside the scope of this specification and is expected to be agreed out of band.">
+          <com:event name="ProcedureFailure" number="3"
+                     comment="A ProcedureFailure event is used to hold the error code of the execution failure.">
+            <com:objectType>
+              <mal:type name="UInteger" area="MAL"/>
+            </com:objectType>
+            <com:relatedObject>
+              <com:objectType number="2" service="AutomationControl" area="Automation"/>
+            </com:relatedObject>
+            <com:sourceObject>
+              <com:objectType number="5" service="ActivityTracking" area="COM"/>
+            </com:sourceObject>
+          </com:event>
+        </com:events>
+        <com:archiveUsage comment="ProcedureDefinition objects should be stored in the COM archive.&#xA;When a procedure is sent with the startProcedure operation, the ProcedureInstance object should be stored in the COM archive by the provider."/>
+        <com:activityUsage comment="The COM Activity service may be used to monitor the transfer and execution of the startProcedure operation.&#xA;The COM Activity service may be used to monitor the transfer and execution of ProcedureInstance objects.&#xA;The COM activity events shall be generated as defined in the COM activity tracking service for the startProcedure operation.&#xA;An Acceptance activity event for the ProcedureInstance object shall be generated when a procedure is received by the destination provider and after any pre-execution checks being performed as part of the startProcedure operation.&#xA;The source link of the activity events for the ProcedureInstance shall be the ProcedureInstance object.&#xA;The related link of the activity events for the ProcedureInstance shall be set to NULL.&#xA;In all activity execution events for the procedure instance the ActivityExecution.stageCount field shall be set to 8 which is the highest value from the ProcedureState enumeration.&#xA;In the activity execution event the ActivityExecution.executionStage field shall be set to the numerical value of the ProcedureState enumeration for the current procedure state."/>
       </com:features>
     </mal:service>
   </mal:area>

@@ -31,11 +31,15 @@
         </mal:requestIP>
       </mal:capabilitySet>
       <com:features>
-        <com:events comment="The service shall define a single COM event for the notification of application 'alive' status.&#xA;The body of the ApplicationAlive event shall be the application name.&#xA;The application name strings shall be deployment specific.&#xA;Each period each executing application shall publish a single ApplicationAlive COM event.&#xA;The period between ApplicationAlive COM events shall be deployment specific.">
+        <com:events comment="The service shall define two COM events, one for the notification of application 'alive' status, and a second to inform consumers about change of the session control mode.&#xA;The body of the ApplicationAlive event shall be the application name.&#xA;The application name strings shall be deployment specific.&#xA;Each period each executing application shall publish a single ApplicationAlive COM event.&#xA;The period between ApplicationAlive COM events shall be deployment specific.&#xA;The Session Control Mode Changed event shall not make use of an event body. When it is received, consumers need to query the service provider explicitly to update their own session control mode.">
           <com:event name="ApplicationAlive" number="1">
             <com:objectType>
               <mal:type name="String" area="MAL"/>
             </com:objectType>
+          </com:event>
+          <com:event name="ControlModeChange" number="2">
+            <!--  no even body required -->
+            <com:objectType/>
           </com:event>
         </com:events>
       </com:features>
@@ -85,6 +89,54 @@
           </com:event>
         </com:events>
       </com:features>
+    </mal:service>
+    <mal:service xsi:type="com:ExtendedServiceType" name="VlSupport" number="3"
+                 comment="The VlSupport service defines utility operations and data required for implementing the Common M&amp;C specification.">
+      <mal:capabilitySet number="1">
+        <mal:submitIP name="broadcastTvlInformation" number="1" supportInReplay="false" comment="(Re-)publish all events about TVL creation">
+          <mal:messages>
+            <mal:submit/>
+          </mal:messages>
+        </mal:submitIP>
+      </mal:capabilitySet>
+      <mal:dataTypes>
+        <mal:composite name="TvlCreation" shortFormPart="1" comment="This composite contains the information that is required when a new TVL is created.">
+          <mal:extends>
+            <mal:type name="Composite" area="MAL"/>
+          </mal:extends>
+          <mal:field name="templateName" canBeNull="false" comment="The name of the template (TVL definition) used to instantiate the TVL instance.">
+            <mal:type name="String" area="MAL"/>
+          </mal:field>
+          <mal:field name="instanceName" canBeNull="false" comment="The name of the TVL instance.">
+            <mal:type name="String" area="MAL"/>
+          </mal:field>
+          <mal:field name="parameters" canBeNull="false" comment="List of names of parameter definitions that the TVL instance holds.">
+            <mal:type name="String" area="MAL" list="true"/>
+          </mal:field>
+        </mal:composite>
+        <mal:composite name="TvlDeletion" shortFormPart="2" comment="This composite contains the information that is required when an existing TVL instance is deleted.">
+        <mal:extends>
+            <mal:type name="Composite" area="MAL"/>
+          </mal:extends>
+          <mal:field name="instanceName" canBeNull="false" comment="The name of the TVL instance.">
+            <mal:type name="String" area="MAL"/>
+          </mal:field>
+        </mal:composite>
+     </mal:dataTypes>
+     <com:features>
+       <com:events comment="">
+         <com:event name="TvlCreated" number="1" comment="The event that is raised when a new TVL instance is created.">
+           <com:objectType>
+             <mal:type name="TvlCreation" area="StandardMC" service="VlSupport"/>
+           </com:objectType>
+         </com:event>       
+         <com:event name="TvlDeleted" number="2" comment="The event that is raised when an existing TVL instance is deleted.">
+           <com:objectType>
+             <mal:type name="TvlDeletion" area="StandardMC" service="VlSupport"/>
+           </com:objectType>
+         </com:event>       
+       </com:events>
+     </com:features>
     </mal:service>
   </mal:area>
 </mal:specification>

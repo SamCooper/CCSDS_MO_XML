@@ -598,6 +598,12 @@
           <mal:field name="convertedValue" comment="The parameter converted value.">
             <mal:type name="Attribute" area="MAL"/>
           </mal:field>
+	  <mal:field name="alarmState" canBeNull="true" comment="The parameter alarm state.">
+            <mal:type name="AlarmState" area="MC" service="Parameter"/>
+          </mal:field>
+	  <mal:field name="alarmDetails" canBeNull="true" comment="The parameter alarm state.">
+            <mal:type name="String" area="MAL"/>
+          </mal:field>
         </mal:composite>
         <mal:composite name="ParameterConversion" shortFormPart="3"
                        comment="The ParameterConversion structure holds information about the conversions to be applied to a parameter.">
@@ -617,6 +623,11 @@
             <mal:type list="true" name="ConditionalReference" area="MC"/>
           </mal:field>
         </mal:composite>
+        <mal:enumeration name="AlarmState" shortFormPart="4" comment="The alarm state for parameters">
+          <mal:item value="OK" nvalue="1" comment=""/>
+          <mal:item value="WARNING" nvalue="2" comment=""/>
+          <mal:item value="ALARM" nvalue="3" comment=""/>
+        </mal:enumeration>
       </mal:dataTypes>
       <com:features>
         <com:objects comment="The definitions of the parameters shall be represented as ParameterDefinition COM objects.&#xA;Parameter value updates shall be represented as ParameterValueInstance COM objects.&#xA;The ParameterValueInstance object shall use the related link to indicate which ParameterDefinition object it uses.&#xA;The source link of the ParameterDefinition object should be the object that caused it to be created, most likely a COM OperationActivity object or an operator login in the case of off-line editors being used.&#xA;The source link of the ParameterValueInstance object should be the object that caused the update to be generated.&#xA;The source link of the ParameterValueInstance object shall be NULL for periodic updates.">
